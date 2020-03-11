@@ -10,7 +10,7 @@ class BaseController {
     displayServiceError() {
         this.toast('Service injoignable ou problème réseau')
     }
-    getInstance(selector) {
+    getModal(selector) {
         return M.Modal.getInstance($(selector))
     }
     setBackButtonView(view) {

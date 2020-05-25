@@ -1,0 +1,20 @@
+<h3>Connexion</h3>
+<div>
+    <div class="row">
+        <form class="col s12" id="formLogin">
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="fieldLogin" type="text" class="validate" value="user1@example.com">
+                    <label for="fieldLogin" class="active">Adresse e-mail</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="fieldPassword" type="password" class="validate">
+                    <label for="fieldPassword" class="active">Mot de passe</label>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <a class="waves-effect waves-light btn" onclick="loginController.authenticate()"><i class="material-icons right">check</i>Se connecter</a>
+    </div>
+</div>

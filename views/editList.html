@@ -1,0 +1,38 @@
+<div class="container">
+    <h3 id="editTitle"></h3>
+    <div id="formEditList">
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input id="fieldListShop" type="text" class="validate">
+                        <label for="fieldListShop" class="active">Shop</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input id="fieldListDate" type="text" class="datepicker">
+                        <label for="fieldListDate" class="active">Date</label>
+                    </div>
+                </div>
+                <div id="items">
+
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <div class="input-field col s4 m2">
+                <input  id="qte" type="number" class="validate">
+                <label for="qte">Quantité</label>
+            </div>
+            <div class="input-field col s7 m9">
+                <input id="label" type="text" class="validate">
+                <label for="label">Item</label>
+            </div>
+            <div class="input-field col s1 m1" style="margin-top: 25px;">
+                <button id="addArticle" class="btn" onclick="editListController.addItem()">+</button>
+            </div>
+        </div>
+        <div class="row">
+            <button class="waves-effect waves-light btn" onclick="editListController.save()"><i class="material-icons right">check</i>Enregistrer</button>
+        </div>
+    </div>
+</div>

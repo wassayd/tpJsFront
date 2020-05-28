@@ -3,6 +3,8 @@ class BaseController {
         M.AutoInit();
         this.setBackButtonView('index')
         this.model = new Model()
+        this.deletedList = null;
+        this.selectedList = null;
         this.datePicker();
     }
     toast(msg) {
@@ -69,5 +71,68 @@ class BaseController {
                 monthsShort: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Dec']
             }
         });
+    }
+
+    async edit(listId,controller,isArchiver=false){
+        try {
+            const list = (await this.model.getListById(listId))
+            if (list === undefined) {
+                this.displayServiceError();
+                return
+            }
+            if (list === null) {
+                this.displayNotFoundError();
+                return
+            }
+
+            this.selectedList = list;
+            navigate(controller)
+        }catch (e) {
+            console.log(e)
+        }
+
+    }
+
+    undoDelete(controller) {
+        if (this.deletedList) {
+            this.deletedList.date_achat = this.deletedList.date_achat.toISOString().slice(0, 19).replace('T', ' ');
+            if (controller.constructor.name === "Archive"){
+                this.deletedList.is_archived = true
+                console.log("apres",this.deletedList)
+            }
+            this.model.insertList(this.deletedList).then(status => {
+                console.log("status",status)
+                if (status == 200) {
+                    console.log("qsdqsdqsdqdq",this.deletedList)
+                    this.deletedList = null;
+                    this.displayUndoDone();
+                    this.showLists();
+                }else{
+                    super.toast("Impossible d'annuler la suppresion erreur "+status+" serveur")
+                }
+            }).catch(_ => this.displayServiceError())
+        }
+    }
+    async confirmDelete(id,controller) {
+        try {
+            const list = await this.model.getListById(id);
+            this.displayConfirmDelete(list, async () => {
+                switch (await this.model.deleteList(id)) {
+                    case 200:
+                        this.deletedList = list;
+                        this.displayDeletedMessage(controller+".undoDelete("+controller+")");
+                        this.showLists();
+                        break;
+                    case 404:
+                        this.displayNotFoundError();
+                        break;
+                    default:
+                        this.displayServiceError()
+                }
+            })
+        } catch (err) {
+            console.log(err)
+            this.displayServiceError()
+        }
     }
 }

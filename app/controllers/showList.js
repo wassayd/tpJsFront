@@ -1,16 +1,22 @@
 class ShowList extends BaseController {
     constructor() {
         super();
-        if (indexController.selectedList) {
+        if (indexController.selectedList ) {
             self.selectedList = indexController.selectedList;
             self.isArchiver = indexController.isArchiver;
             indexController.selectedList = null;
 
             $('#title').innerHTML = self.selectedList.shop + " - " + self.selectedList.date_achat.toLocaleDateString();
 
-            this.deletedItem = null;
-            this.showList();
+        }else if(archiveController.selectedList){
+            self.selectedList = archiveController.selectedList;
+            self.isArchiver = self.selectedList.is_archived;
+            archiveController.selectedList = null;
+
+            $('#title').innerHTML = self.selectedList.shop + " - " + self.selectedList.date_achat.toLocaleDateString();
         }
+
+        this.showList();
     }
 
     async showList() {

@@ -13,8 +13,8 @@ class Archive extends BaseController{
                     <td>${list.date_achat.toLocaleDateString()}</td>
                     <td>${(await this.model.getItemsByList(list.id)).length}</td>
                     <td>
-                        <button class="btn" onclick="indexController.edit('${list.id}','showList',true)"><i class="material-icons">visibility</i> </button>
-                        <button class="btn" onclick="indexController.displayConfirmDelete('${list.id}')"><i class="material-icons">delete</i></button>
+                        <button class="btn" onclick="archiveController.edit('${list.id}','showList')"><i class="material-icons">visibility</i> </button>
+                        <button class="btn" onclick="archiveController.confirmDelete('${list.id}','archiveController')"><i class="material-icons">delete</i></button>
                     </td>
                 </tr>`;
             }

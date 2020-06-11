@@ -31,4 +31,30 @@ class ListApiService extends BaseAPIService{
             body: JSON.stringify(list)
         })
     }
+
+    getListSharedByListAndUser(userId,listId){
+        return fetchJSON(this.baseUrl+'/list/shared/'+userId+'/'+listId,this.token)
+    }
+
+    getAllSharedLists(){
+        return fetchJSON(this.baseUrl+"/lists/shared",this.token);
+    }
+
+    insertSharedList(listShared){
+        this.headers.set( 'Content-Type', 'application/json' )
+        return fetch( this.baseUrl+'/list/shared', {
+            method: 'POST',
+            headers: this.headers,
+            body: JSON.stringify(listShared)
+        })
+    }
+
+    deleteListShared(id) {
+        this.headers.delete('Content-Type')
+        return fetch(`${ this.baseUrl}/list/shared/${id}`, { method: 'DELETE', headers: this.headers})
+    }
+
+    getListSharedByid(id){
+        return fetchJSON(this.baseUrl+'/list/shared/'+id,this.token)
+    }
 }

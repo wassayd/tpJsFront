@@ -17,6 +17,7 @@
                 <li><a  onclick="navigate('index');"    class="modal-trigger">Liste en cours</a></li>
                 <li><a  onclick="navigate('newList');"  class="modal-trigger">Nouvelle liste</a></li>
                 <li><a  onclick="navigate('archive');" class="modal-trigger">Historique</a></li>
+                <li><a  onclick=" sessionStorage.removeItem('token'); sessionStorage.removeItem('login');window.location.reload(); " class="modal-trigger">Deconnexion</a></li>
             </ul>
         </div>
     </nav>
@@ -29,6 +30,38 @@
         </div>
         <div class="modal-footer">
             <a  class="modal-close waves-effect waves-green btn-flat" id="btnDelete">Oui</a>
+        </div>
+    </div>
+
+    <div id="modalShare" class="modal">
+        <div class="modal-content">
+            <h4>Rechercher un utilisateur pour partager la liste</h4>
+            <div style="display: flex; align-items: center">
+                <input type="text" class="file-path validate" id="searchUserInput" placeholder="Rechercher un utlisateur" style="margin-right: 20px;padding: 10px">
+                <button class="btn"  id="searchUserBtn"><i class="material-icons">search</i></button>
+            </div>
+            <p id="text-error" style="color: red;"><i class="material-icons" style="vertical-align: -25%;margin-right: 10px;">error</i>Erreur utilisateur introuvable </p>
+            <div id="userFinded" style="display: none">
+                <div  class="card-panel teal">
+                    <i class="material-icons" style="vertical-align: -25%;margin-right: 10px;color: white">account_circle</i><span id="displayName" class="white-text"></span>
+                </div>
+                <p>
+                    <label>
+                        <input class="with-gap" name="group1" type="radio" id="radioLecture" checked  />
+                        <span>Lecture seul</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        <input class="with-gap" name="group1" type="radio" id="radioModify"  />
+                        <span>Lecture seul et Mofification</span>
+                    </label>
+                </p>
+                <button class="btn" id="shareList">Partager</button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-green btn-flat" >Fermer</a>
         </div>
     </div>
     <script type="application/ecmascript" src="app/tools.js"></script>

@@ -64,7 +64,7 @@ class EditController extends BaseFormController {
             $('#label').parentNode.classList.toggle("animated");
             return;
         }
-        let item       = new Item(label,qte,self.selectedList.id);
+        let item       = new Item(null,label,qte,false,self.selectedList.id);
 
         if (await this.model.insertItem(item) === 200){
             this.showList();
@@ -105,12 +105,17 @@ class EditController extends BaseFormController {
 
    async updateItem(){
         $('.item',async (e)=>{
-            let itemId = parseInt(e.id.substring(5));
-            let item = await this.model.getItem(itemId);
-            item.label    = $(`#label-${itemId}`).value;
-            item.quantity = parseInt($(`#qte-${itemId}`).value);
-            item.is_checked = $(`#done-${itemId}`).checked
-            await this.model.updateItem(item);
+            try{
+                let itemId = parseInt(e.id.substring(5));
+                let item = await this.model.getItem(itemId);
+                item.label    = $(`#label-${itemId}`).value;
+                item.quantity = parseInt($(`#qte-${itemId}`).value);
+                item.is_checked = $(`#done-${itemId}`).checked
+                await this.model.updateItem(item);
+            }catch (e) {
+                console.log(e)
+                this.displayServiceError()
+            }
         })
        /**/
     }

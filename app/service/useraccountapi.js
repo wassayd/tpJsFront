@@ -16,4 +16,12 @@ class UserAccountAPI extends BaseAPIService {
             }
         }).catch(err => reject(err)))
     }
+
+    getUserByLogin(login){
+        return fetchJSON(this.url+"/user/"+login,this.token)
+    }
+
+    getUserById(id){
+        return fetchJSON(this.url+"/userid/"+id,this.token)
+    }
 }

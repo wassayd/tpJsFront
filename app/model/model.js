@@ -3,6 +3,7 @@ class Model {
         // data-oriented service instanciations (ex: API)
         this.listApi = new ListApiService();
         this.itemApi = new ItemsApiService();
+        this.userApi = new UserAccountAPI();
     }
 
     async getAll(){
@@ -62,10 +63,11 @@ class Model {
 
     async getItem(id){
         try{
-            let item = Object.assign(new Item(),(await this.itemApi.getItem(id))[0]);
+            let item = Object.assign(new Item(),await this.itemApi.getItem(id));
 
             return item;
         }catch (e) {
+            console.log(e)
             if (e === 404) return null;
             return undefined;
         }
@@ -93,6 +95,57 @@ class Model {
 
     deleteItem(item) {
         return this.itemApi.delete(item).then(res => res.status);
+    }
+    async getUser(login){
+        return await this.userApi.getUserByLogin(login);
+    }
+
+    async  getSharedLists(){
+        try{
+            let listsShared = [];
+
+            for (let listShared of await this.listApi.getAllSharedLists()){
+                listsShared.push(Object.assign(new ListShared(),listShared))
+            }
+            return listsShared;
+        }catch (e) {
+            if (e === 404) return null;
+            return undefined;
+        }
+    }
+
+    insertListShared(listShared){
+        return this.listApi.insertSharedList(listShared).then(res => res.status);
+    }
+
+    async getListSharedByListAndUser(userId,listId){
+        return await this.listApi.getListSharedByListAndUser(userId,listId)
+    }
+
+    deleteListShared(id){
+        return this.listApi.deleteListShared(id).then(res => res.status);
+    }
+
+    async getUserById(id){
+        try{
+            let user = Object.assign(new User(),await this.userApi.getUserById(id));
+
+            return user;
+        }catch (e) {
+            if (e === 404) return null;
+            return undefined;
+        }
+    }
+
+    async  getListSharedByid(id){
+        try{
+            let listsShared = Object.assign(new ListShared(),(await this.listApi.getListSharedByid(id))[0]);
+
+            return listsShared;
+        }catch (e) {
+            if (e === 404) return null;
+            return undefined;
+        }
     }
 
 }

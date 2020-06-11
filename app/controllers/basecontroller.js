@@ -5,6 +5,7 @@ class BaseController {
         this.model = new Model()
         this.deletedList = null;
         this.selectedList = null;
+        this.listSharedDeleted  = null;
         this.datePicker();
     }
     toast(msg) {
@@ -23,6 +24,55 @@ class BaseController {
         $('#btnDelete').onclick = onclick
         this.getModal('#modalConfirmDelete').open()
     }
+    async displayShareModal(listId){
+        this.getModal('#modalShare').open();
+        const list  = await this.model.getListById(listId);
+        $('#text-error').style.display = 'none';
+
+        $('#searchUserBtn').onclick = async _=>{
+            if(sessionStorage.getItem('login') ===  $('#searchUserInput').value ){
+                this.errorMsgModal("Vous ne pouvez pas partager une liste avec vous même !")
+                return ;
+            }
+            try {
+                let user =  await this.model.getUser( $('#searchUserInput').value);
+                $("#userFinded").style.display = "block";
+                $("#displayName").innerText    = user.displayName;
+                $("#shareList").onclick = ()=>{this.shareList(list,$('#radioLecture').checked,$('#radioModify').checked,user.id,listId)} ;
+
+            }catch (e) {
+                this.errorMsgModal();
+            }
+        };
+
+    }
+    errorMsgModal(text){
+        if (text !== undefined) {
+            $('#text-error').innerText = text;
+        }
+        $("#userFinded").style.display = "none";
+        $('#text-error').style.display = 'block';
+        $('#text-error').style.opacity = '1';
+        setTimeout(function () {
+            $('#text-error').style.opacity = '0';
+            $('#text-error').style.transition = 'all 1.6s';
+            $('#text-error').style.display = 'none';
+        },1500);
+    }
+
+    async shareList(list,readOnly,modifyOnly,userId,listId){
+        let listShared = new ListShared(readOnly,modifyOnly,userId,listId);
+        if ((await this.model.getListSharedByListAndUser(userId,listId)).length > 0){
+            this.toast("La list a deja etais partagé pour cet utilisateur ");
+            return
+        }
+        if (await this.model.insertListShared(listShared) === 200){
+            this.toast("List partager avec succés ")
+        }else{
+            this.displayServiceError()
+        }
+    }
+
     displayServiceError() {
         this.toast('Service injoignable ou problème réseau')
     }
@@ -98,12 +148,10 @@ class BaseController {
             this.deletedList.date_achat = this.deletedList.date_achat.toISOString().slice(0, 19).replace('T', ' ');
             if (controller.constructor.name === "Archive"){
                 this.deletedList.is_archived = true
-                console.log("apres",this.deletedList)
             }
             this.model.insertList(this.deletedList).then(status => {
                 console.log("status",status)
                 if (status == 200) {
-                    console.log("qsdqsdqsdqdq",this.deletedList)
                     this.deletedList = null;
                     this.displayUndoDone();
                     this.showLists();
@@ -111,6 +159,21 @@ class BaseController {
                     super.toast("Impossible d'annuler la suppresion erreur "+status+" serveur")
                 }
             }).catch(_ => this.displayServiceError())
+        }
+    }
+
+    undoDeleteListShared(){
+        if (this.listSharedDeleted){
+            this.model.insertListShared(this.listSharedDeleted)
+                .then(status =>{
+                    if (status === 200){
+                        this.listSharedDeleted =null;
+                        this.displayUndoDone();
+                        this.showsListsShared();
+                    }else{
+                        super.toast("Impossible d'annuler la suppresion erreur "+status+" serveur")
+                    }
+                })
         }
     }
     async confirmDelete(id,controller) {
@@ -122,6 +185,31 @@ class BaseController {
                         this.deletedList = list;
                         this.displayDeletedMessage(controller+".undoDelete("+controller+")");
                         this.showLists();
+                        break;
+                    case 404:
+                        this.displayNotFoundError();
+                        break;
+                    default:
+                        this.displayServiceError()
+                }
+            })
+        } catch (err) {
+            console.log(err)
+            this.displayServiceError()
+        }
+    }
+
+    async confirmDeleteListShared(listId){
+        try {
+            const listShared = (await this.model.getListSharedByid(listId));
+            console.log(listShared)
+            this.displayConfirmDelete(listShared, async () => {
+                switch (await this.model.deleteListShared(listId)) {
+                    case 200:
+                        this.listSharedDeleted = listShared;
+                        console.log(listShared)
+                        this.displayDeletedMessage("indexController.undoDeleteListShared()");
+                        this.showsListsShared();
                         break;
                     case 404:
                         this.displayNotFoundError();

@@ -51,10 +51,17 @@ class ShowList extends BaseController {
     }
 
     async updateCheckedItem(e){
-        let itemId = parseInt(e.id.substring(5));
-        let item = await this.model.getItem(itemId);
-        item.is_checked = e.checked
-        await this.model.updateItem(item);
+        try{
+
+            let itemId = parseInt(e.id.substring(5));
+            let item = await this.model.getItem(itemId);
+            item.is_checked = e.checked
+            await this.model.updateItem(item);
+
+        }catch (e) {
+            console.log(e)
+            this.displayServiceError()
+        }
     }
 
     async archiver(){

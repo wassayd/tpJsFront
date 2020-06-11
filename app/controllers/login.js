@@ -12,7 +12,8 @@ class LoginController extends BaseFormController {
         if ((login != null) && (password != null)) {
             this.svc.authenticate(login, password)
                 .then(res => {
-                    sessionStorage.setItem("token", res.token)
+                    sessionStorage.setItem("token", res.token);
+                    sessionStorage.setItem("login", login);
                     window.location.replace("index.html")
                 })
                 .catch(err => {
